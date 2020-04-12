@@ -1,0 +1,61 @@
+1. Create a new page
+
+Create the new page using Emmet ! abbreviation
+
+2. Create a div for hosting the application
+
+> <body>
+>   <div id="app">
+>     <h1>{{ message }}</h1>
+>   </div>
+> </body>
+
+3. Create a script tag that will instantiate Vue application
+
+>   <script>
+>     new Vue({
+>       el: '#app',
+>       data: {
+>         message: 'Hello, world! from Vue.js!!'
+>       }
+>     })
+>   </script>
+
+4. Import Vue.js from https://unpkg.com/vue (preferably in the head section)
+
+>   <script src="https://unpkg.com/vue"></script>
+
+5. Run the live-server from embedded console
+
+> live-server .
+
+6. Create a 2-way binding to an input to show dynamic updates to data and DOM
+
+>     <input type="text" v-model="message">
+
+7. Extract Message component
+
+>   <template id="message">
+>     <h4>{{ text }}</h4>
+>   </template>
+> 
+>   <script>
+>     Vue.component('message', {
+>       template: '#message',
+>       props: {
+>         text: { type: String, required: false, default: '' }
+>       }
+>     })
+>   </script>
+
+8. Use <Message> component in the template instead of the h1
+
+>     <Message :text="message"></Message>
+
+9. Create the "focus" directive
+
+>     Vue.directive('focus', {
+>       inserted: function (el) {
+>         el.focus()
+>       }
+>     })

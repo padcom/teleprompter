@@ -1,0 +1,103 @@
+1. Install Vue CLI
+
+> npm install -g @vue/cli
+
+2. Create a project using Vue CLI and show a few available options
+
+> vue create hello-world
+
+3. Show the structure of the project
+
+   - src
+   - components
+   - main.js
+   - App.vue
+
+4. Remove everything from the project
+
+   - components/HelloWorld.vue
+   - content of App.vue
+
+5. Show dynamic text in App.vue
+
+> <template>
+>   <div id="app">
+>     <h1>{{ message }}</h1>
+>   </div>
+> </template>
+> 
+> <script>
+> export default {
+>   name: 'App',
+>   data() {
+>     return {
+>       message: 'Hello, world!'
+>     }
+>   }
+> }
+> </script>
+
+6. Create a dialog markdown
+
+>     <button @click="showDialog">Click me!</button>
+>     <dialog ref="dialog">
+>       <p>Hello! I am a dialog!</p>
+>       <button @click="closeDialog">Close</button>
+>     </dialog>
+
+6. Create dialog management routines
+
+>   methods: {
+>     showDialog() {
+>       this.$refs.dialog.showModal()
+>     },
+>     closeDialog() {
+>       this.$refs.dialog.close()
+>     }
+>   }
+
+7. Explain the use of $refs
+
+8. Create a Message component
+
+> <template>
+>   <h1>{{ text }}</h1>
+> </template>
+> 
+> <script>
+> export default {
+>   props: {
+>     text: { type: String, required: true }
+>   }
+> }
+> </script>
+
+9. Import the Message component
+
+> import Message from '@/components/Message'
+
+10. Register the Message component for use within the App component
+
+>   components: {
+>     Message
+>   },
+
+11. Use the Message component instead of <h1> in App.vue
+
+>     <Message :text="message" />
+
+12. Change the implementation of Message component form props to slot
+
+> <template>
+>   <h2><slot /></h2>
+> </template>
+
+13. Change the use of Message component to content
+
+>     <Message>{{ message }}</Message>
+
+14. Provide default slot content for Message component
+
+> <template>
+>   <h2><slot>Default message</slot></h2>
+> </template>
