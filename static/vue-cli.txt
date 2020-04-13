@@ -98,6 +98,230 @@
 
 14. Provide default slot content for Message component
 
+Slots are tools for providing content to be rendered in a selected part of the component
+
 > <template>
 >   <h2><slot>Default message</slot></h2>
 > </template>
+
+15. Create a named slot.
+
+Named slots allow us to provide additional slots that will be rendered. They are great for rendering templates.
+
+> <template>
+>   <section class="page-template">
+>     <header class="header">
+>       <slot name="header">Header</slot>
+>     </header>
+>     <aside class="sidebar">
+>       <slot name="sidebar">Sidebar</slot>
+>     </aside>
+>     <main class="content">
+>       <slot>Content</slot>
+>     </main>
+>     <footer class="footer">
+>       <slot name="footer">Footer</slot>
+>     </footer>
+>   </section>
+> </template>
+> 
+> <style scoped>
+> .page-template {
+>   margin: -8px -20px 0px 0px;
+>   width: 100%;
+>   height: calc(100vh - 8px);
+>   display: grid;
+>   grid-template-areas: 
+>     ". header header ."
+>     ". sidebar content ."
+>     ". footer footer .";
+>   grid-template-columns: 1fr 100px 300px 1fr;
+>   grid-template-rows: 50px 1fr 30px;
+> }
+> 
+> .header {
+>   grid-area: header;
+>   background-color: #aec4db;
+> }
+> 
+> .sidebar {
+>   grid-area: sidebar;
+>   background-color: #f3ffdd;
+> }
+> 
+> .content {
+>   grid-area: content;
+>   background-color: white;
+> }
+> 
+> .footer {
+>   grid-area: footer;
+>   background-color: #ffdefb;
+> }
+> </style>
+
+16. Dynamically created slots with data binding
+
+Dynamically created slots are great to render all sorts of iterative components.
+They allow to return rendering control to the parent component which can then render the content specific for some part of the component.
+This is especially useful for rendering tables.
+
+> <template>
+>   <table>
+>     <thead>
+>       <th v-for="column in columns" :key="column.field">
+>         {{ column.title }}
+>       </th>
+>     </thead>
+>     <tbody>
+>       <tr v-for="row in rows" :key="row.id">
+>         <td v-for="column in columns" :key="column.field">
+>           <slot :name="column.field" :row="row" :cell="row[column.field]">
+>             {{ row[column.field] }}
+>           </slot>
+>         </td>
+>       </tr>
+>     </tbody>
+>   </table>
+> </template>
+> 
+> <script>
+> export default {
+>   props: {
+>     columns: { type: Array, required: true },
+>     rows: { type: Array, required: true }
+>   }
+> }
+> </script>
+
+17. Use the DynamicTable component
+
+First part of the text is the use of the component.
+Second part is the import (don't forget to declare it in the components section)
+Last part is the data definition
+
+>     <DynamicTable :columns="columns" :rows="people">
+>       <template #name="{ cell }">
+>         <i>{{ cell }}</i>
+>       </template>
+>     </DynamicTable>
+> 
+> import DynamicTable from '@/components/DynamicTable'
+> 
+>       columns: [
+>         { field: 'name', title: 'User' },
+>         { field: 'age', title: 'Age' }
+>       ],
+>       people: [
+>         { id: 1, name: 'John Doe', age: 32 },
+>         { id: 2, name: 'Jane Smith', age: 22 },
+>         { id: 3, name: 'Yoda', age: 700 }
+>       ]
+
+18. Create an input that will edit the value of message
+
+Show the audience how the immediate feedback loop works and that the value being changed immediately changes in other places
+
+>     <p>
+>       <input v-model="message" />
+>     </p>
+
+19. Create an Editor component with delayed value propagation
+
+This component stores the value being edited in an internal state and then allows to selectively emit the 'input' event.
+
+> <template>
+>   <div>
+>     <label>{{ label }}</label>
+>     <input v-model="internalValue">
+>     <button @click="$emit('input', internalValue)">Save</button>
+>   </div>
+> </template>
+> 
+> <script>
+> export default {
+>   props: {
+>     value: { type: String, required: true },
+>     label: { type: String, required: false, default: 'Label' }
+>   },
+>   data() {
+>     return {
+>       internalValue: this.value
+>     }
+>   },
+>   watch: {
+>     value(newValue) {
+>       this.internalValue = newValue
+>     }
+>   }
+> }
+> </script>
+
+20. Editor in a dialog
+
+An editor in a dialog is a specific case where we would like to give the user an option to accept or cancel the edit.
+In this case instead of using a watcher we know exactly the moment when the latest value should be stored in the internal state.
+That is the moment when we open the dialog.
+
+> <template>
+>   <dialog ref="dialog">
+>     <p>
+>       <label>Edit message</label>
+>       <input v-model="internalValue" />
+>     </p>
+>     <p>
+>       <button @click="cancel">Cancel</button>
+>       <button @click="ok">OK</button>
+>     </p>
+>   </dialog>
+> </template>
+> 
+> <script>
+> export default {
+>   props: {
+>     value: { type: String, required: true }
+>   },
+>   data() {
+>     return {
+>       internalValue: this.value
+>     }
+>   },
+>   methods: {
+>     open() {
+>       this.internalValue = this.value
+>       this.$refs.dialog.showModal()
+>     },
+>     cancel() {
+>       this.$refs.dialog.close()
+>     },
+>     ok() {
+>       this.$refs.dialog.close()
+>       this.$emit('input', this.internalValue)
+>     }
+>   }
+> }
+> </script>
+
+
+21. Components specialization
+
+We're talking about component specialization when a generic component is wrapped with a more specific component.
+A good example is a text editor that will accept only numeric inputs or a complex dropdown that has a predefined label.
+
+> <template>
+>   <Editor
+>     label="Message"
+>     v-bind="$attrs"
+>     v-on="$listeners"
+>   />
+> </template>
+> 
+> <script>
+> import Editor from './Editor'
+> 
+> export default {
+>   components: {
+>     Editor
+>   }
+> }
+> </script>
