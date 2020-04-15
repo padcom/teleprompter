@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello, Vue!</title>
+  <script src="https://unpkg.com/vue"></script>
+</head>
+<body>
+  <div id="app">
+    <Message>
+      <i>{{ message }}</i>
+      <input type="text" :value="message" @input="message = $event" v-focus>
+    </Message>
+    
+  </div>
+
+  <template id="message">
+    <h4><slot></slot></h4>
+  </template>
+
+  <script>
+    Vue.component('Message', {
+      template: '#message',
+      props: {
+        text: { type: String, required: false, default: '' }
+      }
+    })
+
+    Vue.directive('focus', {
+      inserted (el) {
+        el.focus()
+      }
+    })
+
+    app = new Vue({
+      el: '#app',
+      data: {
+        message: 'Hello, world! from Vue.js!'
+      }
+    })
+  </script>
+</body>
+</html>
